@@ -105,7 +105,8 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    sparkFlexMotorPair.accept( attenuated( joystickDriver.getX(), 2, 0.3 ) );
+    // target is 78% of max speed 5800 rpm
+    sparkFlexMotorPair.accept( attenuated( joystickDriver.getX(), 2, 0.25 ) );
     //sparkMaxMotor.accept( attenuated(joystickSupport.getX(), 2, 0.3));
   }
 

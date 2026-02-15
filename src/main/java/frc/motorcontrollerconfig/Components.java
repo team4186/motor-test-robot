@@ -25,17 +25,17 @@ public class Components
     private static final class TestMotor
     {
         private final SingleSparkMaxMotor testMotorSingleMotor = new SingleSparkMaxMotor(
-                new SparkMax(1, SparkLowLevel.MotorType.kBrushless),
-                DefaultMotorConfigs.getInstance().getDefaultConfig(),
+                new SparkMax(41, SparkLowLevel.MotorType.kBrushless),
+                DefaultMotorConfigs.getInstance().getDefaultSparkMaxConfig(),
                 false //Option to invert the motor (t/f)
         );
     }
 
     private static final class TestFlexMotorPair {
         private final SparkFlexMotorPair motorPair = new SparkFlexMotorPair(
-                new SparkFlex(15, SparkLowLevel.MotorType.kBrushless),
-                new SparkFlex(16, SparkLowLevel.MotorType.kBrushless),
-                DefaultMotorConfigs.getInstance().getDefaultConfig(),
+                new SparkFlex(21, SparkLowLevel.MotorType.kBrushless),
+                new SparkFlex(22, SparkLowLevel.MotorType.kBrushless),
+                DefaultMotorConfigs.getInstance().getDefaultSparkFlexConfig(),
                 false
         );
     }

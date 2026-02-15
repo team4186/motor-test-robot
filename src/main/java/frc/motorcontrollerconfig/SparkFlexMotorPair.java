@@ -24,7 +24,7 @@ public class SparkFlexMotorPair {
         followerConfig
                 .apply(baseConfig)
                 .follow(motorLeader)
-                .inverted( !inverse);
+                .inverted( !inverse );
 
         motorFollower.configure(
                 followerConfig,

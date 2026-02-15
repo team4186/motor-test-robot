@@ -1,6 +1,7 @@
 package frc.motorcontrollerconfig;
 
 import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants;
 
@@ -20,13 +21,20 @@ public final class DefaultMotorConfigs {
         return instance;
     }
 
-    public SparkMaxConfig getDefaultConfig()
+    public SparkMaxConfig getDefaultSparkMaxConfig()
     {
-        return DefaultConfig;
+        return DefaultSparkMaxConfig;
     }
 
 
-    public final SparkMaxConfig DefaultConfig = (SparkMaxConfig) new SparkMaxConfig()
+    public SparkFlexConfig getDefaultSparkFlexConfig() { return DefaultSparkFlexConfig; }
+
+
+    public final SparkMaxConfig DefaultSparkMaxConfig = (SparkMaxConfig) new SparkMaxConfig()
+            .smartCurrentLimit(50)
+            .idleMode(SparkBaseConfig.IdleMode.kCoast);
+
+    public final SparkFlexConfig DefaultSparkFlexConfig = (SparkFlexConfig) new SparkFlexConfig()
             .smartCurrentLimit(50)
             .idleMode(SparkBaseConfig.IdleMode.kBrake);
     // .idleMode(SparkBaseConfig.IdleMode.kCoast);
