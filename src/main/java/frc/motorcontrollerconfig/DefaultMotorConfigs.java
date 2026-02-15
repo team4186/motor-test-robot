@@ -3,7 +3,7 @@ package frc.motorcontrollerconfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import frc.robot.Constants;
+import frc.Constants;
 
 
 // MotorConfigs Singleton for Subsystem Motors (Swerve Subsystem not included)
@@ -21,21 +21,21 @@ public final class DefaultMotorConfigs {
         return instance;
     }
 
-    public SparkMaxConfig getDefaultSparkMaxConfig()
+    public SparkBaseConfig getDefaultSparkMaxConfig()
     {
         return DefaultSparkMaxConfig;
     }
 
 
-    public SparkFlexConfig getDefaultSparkFlexConfig() { return DefaultSparkFlexConfig; }
+    public SparkBaseConfig getDefaultSparkFlexConfig() { return DefaultSparkFlexConfig; }
 
 
-    public final SparkMaxConfig DefaultSparkMaxConfig = (SparkMaxConfig) new SparkMaxConfig()
-            .smartCurrentLimit(50)
+    public final SparkBaseConfig DefaultSparkMaxConfig = new SparkMaxConfig()
+            .smartCurrentLimit(50) // NEO 550
             .idleMode(SparkBaseConfig.IdleMode.kCoast);
 
-    public final SparkFlexConfig DefaultSparkFlexConfig = (SparkFlexConfig) new SparkFlexConfig()
-            .smartCurrentLimit(50)
-            .idleMode(SparkBaseConfig.IdleMode.kBrake);
+    public final SparkBaseConfig DefaultSparkFlexConfig = new SparkFlexConfig()
+            .smartCurrentLimit(80) // NEO VORTEX
+            .idleMode(SparkBaseConfig.IdleMode.kCoast);
     // .idleMode(SparkBaseConfig.IdleMode.kCoast);
 }

@@ -20,9 +20,9 @@ public class SingleSparkMaxMotor {
         this.motor = motor;
     }
 
-    public SparkMax getMotor() {
-        return motor;
-    }
+//    public SparkMax getMotor() {
+//        return motor;
+//    }
 
     public RelativeEncoder getRelativeEncoder() {
         return this.motor.getEncoder();

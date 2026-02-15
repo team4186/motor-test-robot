@@ -1,8 +1,10 @@
 package frc.motorcontrollerconfig;
 
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 public class Components
 {

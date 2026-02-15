@@ -11,6 +11,8 @@ public class SparkFlexMotorPair {
     private final SparkFlex motor;
 
     public SparkFlexMotorPair(SparkFlex motorLeader, SparkFlex motorFollower, SparkBaseConfig baseConfig, boolean inverse) {
+        this.motor = motorLeader;
+
         baseConfig.inverted(inverse);
 
         motorLeader.configure(
@@ -19,24 +21,21 @@ public class SparkFlexMotorPair {
                 SparkBase.PersistMode.kPersistParameters
         );
 
-        SparkFlexConfig followerConfig = new SparkFlexConfig();
+        SparkBaseConfig followerConfig = new SparkFlexConfig();
 
         followerConfig
                 .apply(baseConfig)
-                .follow(motorLeader)
-                .inverted( !inverse );
+                .follow(motorLeader, !inverse);
 
         motorFollower.configure(
                 followerConfig,
                 SparkBase.ResetMode.kNoResetSafeParameters,
                 SparkBase.PersistMode.kPersistParameters);
-
-        this.motor = motorLeader;
     }
 
-    public SparkFlex getMotor() {
-        return motor;
-    }
+//    public SparkFlex getMotor() {
+//        return motor;
+//    }
 
     public RelativeEncoder getRelativeEncoder() {
         return this.motor.getEncoder();

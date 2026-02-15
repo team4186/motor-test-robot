@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -38,6 +41,7 @@ public class Robot extends TimedRobot {
   private final Components motorComponents = Components.getInstance();
   private final SparkFlexMotorPair sparkFlexMotorPair = motorComponents.getTestFlexMotorPair();
   private final SingleSparkMaxMotor sparkMaxMotor = motorComponents.getTestMotor();
+  private final RelativeEncoder testEncoder = sparkFlexMotorPair.getEncoder();
 
 
   final CommandJoystick joystickDriver = new CommandJoystick(0);
@@ -63,7 +67,10 @@ public class Robot extends TimedRobot {
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+    SmartDashboard.putNumber("Position: ", testEncoder.getPosition());
+    SmartDashboard.putNumber("Motor RPM", testEncoder.getVelocity());
+  }
 
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
@@ -106,7 +113,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // target is 78% of max speed 5800 rpm
-    sparkFlexMotorPair.accept( attenuated( joystickDriver.getX(), 2, 0.25 ) );
+    sparkFlexMotorPair.accept( attenuated( joystickDriver.getX(), 2, 0.78 ) );
     //sparkMaxMotor.accept( attenuated(joystickSupport.getX(), 2, 0.3));
   }
 
