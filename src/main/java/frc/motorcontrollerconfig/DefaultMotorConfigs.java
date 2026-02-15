@@ -1,4 +1,4 @@
-package frc.robot.sparkmaxconfigs;
+package frc.motorcontrollerconfig;
 
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -18,6 +18,11 @@ public final class DefaultMotorConfigs {
             instance = new DefaultMotorConfigs();
         }
         return instance;
+    }
+
+    public SparkMaxConfig getDefaultConfig()
+    {
+        return DefaultConfig;
     }
 
 
