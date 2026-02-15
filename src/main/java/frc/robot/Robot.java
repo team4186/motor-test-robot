@@ -7,6 +7,11 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import frc.motorcontrollerconfig.Components;
+import frc.motorcontrollerconfig.SingleSparkMaxMotor;
+import frc.motorcontrollerconfig.SparkFlexMotorPair;
 
 
 /**
@@ -20,6 +25,25 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
+  private final PIDController motorPID = new PIDController(
+          0.0,
+          0.0,
+          0.0);
+
+  private final PIDController motorPairPID = new PIDController(
+          0.0,
+          0.0,
+          0.0);
+
+  private final Components motorComponents = Components.getInstance();
+  private final SparkFlexMotorPair sparkFlexMotorPair = motorComponents.getTestFlexMotorPair();
+  private final SingleSparkMaxMotor sparkMaxMotor = motorComponents.getTestMotor();
+
+
+  final CommandJoystick joystickDriver = new CommandJoystick(0);
+  final CommandJoystick joystickSupport = new CommandJoystick(1);
+
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -28,6 +52,7 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+
   }
 
   /**
@@ -79,7 +104,10 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    sparkFlexMotorPair.accept( attenuated( joystickDriver.getX(), 2, 0.3 ) );
+    //sparkMaxMotor.accept( attenuated(joystickSupport.getX(), 2, 0.3));
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
@@ -104,4 +132,14 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
+
+
+  private double attenuated(double value, int exponent, double scale){
+    double result = scale * Math.pow( Math.abs(value), exponent);
+    if (value < 0){ result *= -1; }
+
+    return result;
+  }
 }
+
+

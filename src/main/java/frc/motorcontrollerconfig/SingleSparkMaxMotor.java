@@ -35,4 +35,6 @@ public class SingleSparkMaxMotor {
     public void stop() {
         this.motor.stopMotor();
     }
+
+
 }
