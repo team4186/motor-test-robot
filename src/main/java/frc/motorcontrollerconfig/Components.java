@@ -29,6 +29,8 @@ public class Components
         private final SingleSparkMaxMotor testMotorSingleMotor = new SingleSparkMaxMotor(
                 new SparkMax(41, SparkLowLevel.MotorType.kBrushless),
                 DefaultMotorConfigs.getInstance().getDefaultSparkMaxConfig(),
+                1.0,
+                1.0,
                 false //Option to invert the motor (t/f)
         );
     }
@@ -38,6 +40,8 @@ public class Components
                 new SparkFlex(21, SparkLowLevel.MotorType.kBrushless),
                 new SparkFlex(22, SparkLowLevel.MotorType.kBrushless),
                 DefaultMotorConfigs.getInstance().getDefaultSparkFlexConfig(),
+                1.0,
+                1.0,
                 false
         );
     }
