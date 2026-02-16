@@ -84,7 +84,7 @@ public class SparkFlexMotorPair {
     }
 
 
-    public void acceptVoltage(Voltage volts) { this.motor.setVoltage(volts); }
+    public void acceptVoltage(double volts) { this.motor.setVoltage(volts); }
 
 
     public void stop() {

@@ -8,6 +8,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,8 +41,12 @@ public class Robot extends TimedRobot {
   private final SparkClosedLoopController sparkFlexClosedLoop = motorComponents.getTestMotor().getClosedLoopController();
 
 
-  final CommandJoystick joystickDriver = new CommandJoystick(0);
-  final CommandJoystick joystickSupport = new CommandJoystick(1);
+  private final CommandJoystick joystickDriver = new CommandJoystick(0);
+  private final CommandJoystick joystickSupport = new CommandJoystick(1);
+
+
+  private double voltsPair = 0.0;
+  private double voltsSingle = 0.0;
 
 
   /**
@@ -69,6 +74,9 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putNumber("Turret Position", sparkMaxEncoder.getPosition());
     SmartDashboard.putNumber("Turret RPM", sparkMaxEncoder.getVelocity() );
+
+    SmartDashboard.putNumber("VoltsSingle", voltsSingle);
+    SmartDashboard.putNumber("VoltsPair", voltsPair);
 
 //    SmartDashboard.setDefaultNumber("Target Position", 0);
 //    SmartDashboard.setDefaultNumber("Target Velocity", 0);
@@ -131,7 +139,10 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when test mode is enabled. */
   @Override
-  public void testInit() {}
+  public void testInit() {
+    voltsSingle = 0.0;
+    voltsPair = 0.0;
+  }
 
   /** This function is called periodically during test mode. */
   @Override
@@ -143,6 +154,12 @@ public class Robot extends TimedRobot {
 
 //    double targetPosition = SmartDashboard.getNumber("Target Position", 0);
 //    closedLoopController.setSetpoint(targetPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+
+//    voltsSingle += 0.01;
+//    sparkMaxMotor.acceptVoltage( voltsSingle ); // kS turret = 0.24 Volts
+
+//    voltsPair += 0.01;
+//    sparkFlexMotorPair.acceptVoltage( voltsPair ); // ks Shooter = 0.10 Volts
   }
 
   /** This function is called once when the robot is first started up. */
