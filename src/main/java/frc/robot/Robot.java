@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -28,20 +29,15 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  private final PIDController motorPID = new PIDController(
-          0.0,
-          0.0,
-          0.0);
-
-  private final PIDController motorPairPID = new PIDController(
-          0.0,
-          0.0,
-          0.0);
 
   private final Components motorComponents = Components.getInstance();
-  private final SparkFlexMotorPair sparkFlexMotorPair = motorComponents.getTestFlexMotorPair();
   private final SingleSparkMaxMotor sparkMaxMotor = motorComponents.getTestMotor();
-  private final RelativeEncoder testEncoder = sparkFlexMotorPair.getEncoder();
+  private final RelativeEncoder sparkMaxEncoder = motorComponents.getTestMotor().getRelativeEncoder();
+  private final SparkClosedLoopController sparkMaxClosedLoop = motorComponents.getTestMotor().getClosedLoopController();
+
+  private final SparkFlexMotorPair sparkFlexMotorPair = motorComponents.getTestFlexMotorPair();
+  private final RelativeEncoder sparkFlexEncoder = sparkFlexMotorPair.getRelativeEncoder();
+  private final SparkClosedLoopController sparkFlexClosedLoop = motorComponents.getTestMotor().getClosedLoopController();
 
 
   final CommandJoystick joystickDriver = new CommandJoystick(0);
@@ -68,8 +64,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    SmartDashboard.putNumber("Position: ", testEncoder.getPosition());
-    SmartDashboard.putNumber("Motor RPM", testEncoder.getVelocity());
+    SmartDashboard.putNumber("Position: ", sparkFlexEncoder.getPosition());
+    SmartDashboard.putNumber("Motor RPM", sparkFlexEncoder.getVelocity());
+
+    SmartDashboard.putNumber("Turret Position", sparkMaxEncoder.getPosition());
+    SmartDashboard.putNumber("Turret RPM", )
   }
 
   /**
