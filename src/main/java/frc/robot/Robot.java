@@ -68,7 +68,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Motor RPM", sparkFlexEncoder.getVelocity());
 
     SmartDashboard.putNumber("Turret Position", sparkMaxEncoder.getPosition());
-    SmartDashboard.putNumber("Turret RPM", )
+    SmartDashboard.putNumber("Turret RPM", sparkMaxEncoder.getVelocity() );
+
+//    SmartDashboard.setDefaultNumber("Target Position", 0);
+//    SmartDashboard.setDefaultNumber("Target Velocity", 0);
   }
 
   /**
@@ -130,7 +133,15 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+
+//    double targetVelocity = SmartDashboard.getNumber("Target Velocity", 0);
+//    closedLoopController.setSetpoint(targetVelocity, ControlType.kVelocity, ClosedLoopSlot.kSlot1);
+
+
+//    double targetPosition = SmartDashboard.getNumber("Target Position", 0);
+//    closedLoopController.setSetpoint(targetPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+  }
 
   /** This function is called once when the robot is first started up. */
   @Override
