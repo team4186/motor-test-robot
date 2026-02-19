@@ -5,10 +5,9 @@
 package frc.robot;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkMax;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,19 +33,19 @@ public class Robot extends TimedRobot {
   private final Components motorComponents = Components.getInstance();
   private final SingleSparkMaxMotor sparkMaxMotor = motorComponents.getTestMotor();
   private final RelativeEncoder sparkMaxEncoder = motorComponents.getTestMotor().getRelativeEncoder();
-  private final SparkClosedLoopController sparkMaxClosedLoop = motorComponents.getTestMotor().getClosedLoopController();
+  private final SparkClosedLoopController turretClosedLoopController = motorComponents.getTestMotor().getClosedLoopController();
 
   private final SparkFlexMotorPair sparkFlexMotorPair = motorComponents.getTestFlexMotorPair();
   private final RelativeEncoder sparkFlexEncoder = sparkFlexMotorPair.getRelativeEncoder();
-  private final SparkClosedLoopController sparkFlexClosedLoop = motorComponents.getTestMotor().getClosedLoopController();
+  private final SparkClosedLoopController shooterClosedLoopController = motorComponents.getTestMotor().getClosedLoopController();
 
 
   private final CommandJoystick joystickDriver = new CommandJoystick(0);
   private final CommandJoystick joystickSupport = new CommandJoystick(1);
 
 
-  private double voltsPair = 0.0;
-  private double voltsSingle = 0.0;
+  private double voltsPairTesting = 0.0;
+  private double voltsSingleTesting = 0.0;
 
 
   /**
@@ -75,8 +74,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Turret Position", sparkMaxEncoder.getPosition());
     SmartDashboard.putNumber("Turret RPM", sparkMaxEncoder.getVelocity() );
 
-    SmartDashboard.putNumber("VoltsSingle", voltsSingle);
-    SmartDashboard.putNumber("VoltsPair", voltsPair);
+    SmartDashboard.putNumber("VoltsSingle", voltsSingleTesting);
+    SmartDashboard.putNumber("VoltsPair", voltsPairTesting);
 
 //    SmartDashboard.setDefaultNumber("Target Position", 0);
 //    SmartDashboard.setDefaultNumber("Target Velocity", 0);
@@ -140,24 +139,33 @@ public class Robot extends TimedRobot {
   /** This function is called once when test mode is enabled. */
   @Override
   public void testInit() {
-    voltsSingle = 0.0;
-    voltsPair = 0.0;
+    voltsSingleTesting = 0.0;
+    voltsPairTesting = 0.0;
   }
 
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
 
-//    double targetVelocity = SmartDashboard.getNumber("Target Velocity", 0);
-//    closedLoopController.setSetpoint(targetVelocity, ControlType.kVelocity, ClosedLoopSlot.kSlot1);
+    // A Simple example of setting a
+    boolean buttonpress = joystickDriver.trigger( ).getAsBoolean();
+
+    // TESTING: target Velocity and Target Position for closed loop controllers
+    // double targetVelocity = SmartDashboard.getNumber("Target Velocity", 0);
+    double targetVelocity = (buttonpress) ? 5200 : 0; // if true tV = 5200 else 0
+    shooterClosedLoopController.setSetpoint(targetVelocity, ControlType.kVelocity, ClosedLoopSlot.kSlot1);
 
 
-//    double targetPosition = SmartDashboard.getNumber("Target Position", 0);
-//    closedLoopController.setSetpoint(targetPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+    double targetPosition = SmartDashboard.getNumber("Target Position", 0);
+    //double targetPosition = (buttonpress) ? 90 : 0; // if true tP = 90 else 0 (also assuming position is set to degrees)
+    turretClosedLoopController.setSetpoint(targetPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+
+
+    // TESTING: With Advantage and SmartDashboard to track the velocity and voltage values, we can obtain the number of
+    // volts required to break static friction and obtain kS by taking the value just before the velocity changes for the system.
 
 //    voltsSingle += 0.01;
 //    sparkMaxMotor.acceptVoltage( voltsSingle ); // kS turret = 0.24 Volts
-
 //    voltsPair += 0.01;
 //    sparkFlexMotorPair.acceptVoltage( voltsPair ); // ks Shooter = 0.10 Volts
   }
