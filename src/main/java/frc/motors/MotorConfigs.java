@@ -72,8 +72,8 @@ public final class MotorConfigs {
                 TurretConstants.TURRET_KS,
                 ClosedLoopSlot.kSlot0)
             .kV(
-                RobotConstants.NOMINAL_VOLTAGE / TurretConstants.MOTOR_FREE_SPEED,
-                ClosedLoopSlot.kSlot0); // Nominal * Free Wheel Speed
+                TurretConstants.TURRET_KV,
+                ClosedLoopSlot.kSlot0);
 
         motor.configure(
             config,
@@ -111,9 +111,11 @@ public final class MotorConfigs {
                 ClosedLoopSlot.kSlot1) // Range of total voltage
             .feedForward
             // kV is now in Volts, so we multiply by the nominal voltage (12V)
+            .kS(ShooterConstants.SHOOTER_KS,
+                ClosedLoopSlot.kSlot1)
             .kV(
-                RobotConstants.NOMINAL_VOLTAGE / ShooterConstants.MOTOR_FREE_SPEED,
-                ClosedLoopSlot.kSlot1); // Nominal * desired velocity (12/6784)
+                ShooterConstants.SHOOTER_KV,
+                ClosedLoopSlot.kSlot1);
 
         baseConfig.encoder
             .positionConversionFactor(ShooterConstants.POSITION_CONVERSION_FACTOR)
