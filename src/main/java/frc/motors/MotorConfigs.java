@@ -119,7 +119,9 @@ public final class MotorConfigs {
 
         baseConfig.encoder
             .positionConversionFactor(ShooterConstants.POSITION_CONVERSION_FACTOR)
-            .velocityConversionFactor(ShooterConstants.VELOCITY_CONVERSION_FACTOR);
+            .velocityConversionFactor(ShooterConstants.VELOCITY_CONVERSION_FACTOR)
+            .uvwAverageDepth(ShooterConstants.AVERAGE_DEPTH)
+            .uvwMeasurementPeriod(ShooterConstants.MEASUREMENT_PERIOD);
 
         motorLeader.configure(
             baseConfig,

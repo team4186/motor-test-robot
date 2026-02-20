@@ -22,8 +22,7 @@ public final class Constants{
 
         // FeedForward
         public static final double TURRET_KS = 0.24;
-        public static final double TURRET_KV =
-            RobotConstants.NOMINAL_VOLTAGE / TurretConstants.MOTOR_FREE_SPEED;
+        public static final double TURRET_KV = RobotConstants.NOMINAL_VOLTAGE / TurretConstants.MOTOR_FREE_SPEED;
 
         public static final double POSITION_CONVERSION_FACTOR = (1/GEAR_RATIO) * 360; // Convert to degrees
         public static final double VELOCITY_CONVERSION_FACTOR = 1.0;
@@ -52,5 +51,9 @@ public final class Constants{
         public static final double VELOCITY_CONVERSION_FACTOR = 1.0;
         public static final double MIN_OUTPUT = -1.0;
         public static final double MAX_OUTPUT = 1.0;
+
+        // Improving Velocity Based Control
+        public static final int AVERAGE_DEPTH = 5; // 5 Sample Count
+        public static final int MEASUREMENT_PERIOD = 1; // 1ms Moving Avg Window
     }
 }
