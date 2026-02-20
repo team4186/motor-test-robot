@@ -5,6 +5,8 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.commands.actions.SampleCommand;
 import frc.subsystems.ElevatorTemplate;
@@ -59,6 +61,12 @@ public class RobotContainer {
     private final RelativeEncoder shooterEncoder = shooterMotor.getEncoder();
     private final SparkClosedLoopController shooterClosedLoopController = shooterMotor.getClosedLoopController();
 
+    private final int[] turretPositionPresets = { -135, -90,-45, 0,  45, 90, 135};
+    private final int[] shooterVelocityPresets = { 0, 2500, 4000, 5200, 5800};
+
+    private int goalPosition = 0;
+    private int goalVelocity = 0;
+
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -95,17 +103,26 @@ public class RobotContainer {
 
         // Test and Non-test Controller assignments
         if ( DriverStation.isTest() ) {
+            joystickDriver.button(1).onTrue(Commands.runOnce(() -> updateGoalPosition(0)));
+            joystickDriver.button(2).onTrue(Commands.runOnce(() -> updateGoalPosition(1)));
+            joystickDriver.button(3).onTrue(Commands.runOnce(() -> updateGoalPosition(2)));
+            joystickDriver.button(4).onTrue(Commands.runOnce(() -> updateGoalPosition(3)));
+            joystickDriver.button(5).onTrue(Commands.runOnce(() -> updateGoalPosition(4)));
+
+
+            joystickSupport.button(1).onTrue(Commands.runOnce(() -> updateGoalVelocity(0)));
 
         } else  {
-            // joystick.
         }
     }
 
 
-//    public void updateDriverAllianceControls(){
-//        var alliance = DriverStation.getAlliance();
-//        if( alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red ) { }
-//    }
+    public void updateDriverAllianceControls(){
+        var alliance = DriverStation.getAlliance();
+        if ( alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red ) {
+            // Invert X and Y inputs for field oriented control
+        }
+    }
 
 
     /**
@@ -113,67 +130,14 @@ public class RobotContainer {
      *
      * @return the command to run in autonomous
      */
-//    public Command getAutonomousCommand() {
-//        // Create an InstantCommand that runs the drive forward at half speed for arcade drive
-//        // Command driveHalfSpeed = runOnce(() -> drivetrain.arcadeDrive(0.5, 0.0), drivetrain); // arcadeDrive example
-//        // return drivebase.driveToDistanceCommand(10,0.5); // swerve example
-//
-//        Command driveHalfSpeed = runOnce(() -> drivetrain.arcadeDrive(0.5, 0.0), drivetrain);
-//
-//        return driveHalfSpeed;
-//    }
+    public Command getAutonomousCommand() {
+        // Create an InstantCommand that runs the drive forward at half speed for arcade drive
+        // Command driveHalfSpeed = runOnce(() -> drivetrain.arcadeDrive(0.5, 0.0), drivetrain); // arcadeDrive example
+        // return drivebase.driveToDistanceCommand(10,0.5); // swerve example
 
+        // Command driveHalfSpeed = runOnce(() -> drivetrain.arcadeDrive(0.5, 0.0), drivetrain);
 
-    /**
-     * Only use this to track and publish important values in combination with basicMotorTrialsPeriodic()
-     *      using robotPeriodic {@link Robot}.
-     */
-    public void motorTrialsPeriodicValues(){
-        SmartDashboard.putNumber("Shooter_Position", shooterEncoder.getPosition());
-        SmartDashboard.putNumber("Shooter_RPM", shooterEncoder.getVelocity());
-
-        SmartDashboard.putNumber("Turret_Position", turretEncoder.getPosition());
-        SmartDashboard.putNumber("Turret_RPM", turretEncoder.getVelocity() );
-    }
-
-
-    /**
-     * Only use this to run periodic for Simple motor setups in testPeriodic {@link Robot}.
-     */
-    public void basicMotorTrialsPeriodic(){
-        // target is 78% of max speed 5800 rpm
-        double requestDriver = attenuated( joystickDriver.getX(), 2, 0.78 );
-        double requestSupport = attenuated( joystickSupport.getX(), 2, 0.2);
-        shooterMotor.set( requestDriver );
-        turretMotor.set( requestSupport );
-
-        boolean turretButtonPress = false;
-        boolean shooterButtonPress = false;
-
-        // Example of grabbing a button input directly
-        if (joystickDriver.isConnected() && joystickDriver.trigger( ).getAsBoolean()) {
-            turretButtonPress = joystickDriver.trigger( ).getAsBoolean();
-        }
-
-        if ( joystickSupport.isConnected() ) {
-            shooterButtonPress = joystickDriver.trigger().getAsBoolean();
-        }
-
-        // TESTING: target Velocity and Target Position for closed loop controllers
-        // double targetVelocity = SmartDashboard.getNumber("Target Velocity", 0);
-        double targetVelocity = (shooterButtonPress) ? 5200 : 0; // if true tV = 5200 else 0
-        shooterClosedLoopController.setSetpoint(targetVelocity, SparkBase.ControlType.kVelocity, ClosedLoopSlot.kSlot1);
-
-        // Grab target position or offset from SmartDashboard
-        // double targetPosition = SmartDashboard.getNumber("Target Position", 0);
-        // turretCLController.setSetpoint(targetPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0);
-
-
-        // SYSTEM TESTING: With Advantage and SmartDashboard to track the velocity and voltage values, we can obtain the number of
-        // volts required to break static friction and obtain kS by taking the value just before the velocity changes for the system.
-        //      voltsSystemTest += 0.01;
-        //      sparkMaxMotor.acceptVoltage( voltsSystemTest ); // kS turret = 0.24 Volts
-        //      sparkFlexMotorPair.acceptVoltage( voltsSystemTest ); // ks Shooter = 0.10 Volts
+        return Commands.none();
     }
 
 
@@ -186,5 +150,65 @@ public class RobotContainer {
         double result = scale * Math.pow( Math.abs(value), exponent);
         if (value < 0){ result *= -1; }
         return result;
+    }
+
+
+    /**
+     * Only use this to track and publish important values in combination with basicMotorTrialsPeriodic()
+     *      using robotPeriodic {@link Robot}.
+     */
+    public void motorTrialsPeriodicValues(){
+        SmartDashboard.putNumber("Goal Position", goalPosition );
+        SmartDashboard.putNumber("Shooter_Position", shooterEncoder.getPosition());
+        SmartDashboard.putNumber("Shooter_RPM", shooterEncoder.getVelocity());
+
+
+        SmartDashboard.putNumber("Goal Velocity", goalVelocity);
+        SmartDashboard.putNumber("Turret_Position", turretEncoder.getPosition());
+        SmartDashboard.putNumber("Turret_RPM", turretEncoder.getVelocity() );
+    }
+
+
+    /**
+     * Only use this to run periodic for Simple motor setups in testPeriodic {@link Robot}.
+     */
+    public void basicMotorTrialsPeriodic(){
+        // Manually move motors
+        // target is 78% of max speed 5800 rpm
+//        double requestDriver = attenuated( joystickDriver.getX(), 2, 0.78 );
+//        double requestSupport = attenuated( joystickSupport.getX(), 2, 0.2);
+//        shooterMotor.set( requestDriver );
+//        turretMotor.set( requestSupport );
+
+
+        // Updated in test controller inputs
+        turretCLController.setSetpoint(goalPosition, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        shooterClosedLoopController.setSetpoint(goalVelocity, SparkBase.ControlType.kVelocity, ClosedLoopSlot.kSlot1);
+
+
+        // SYSTEM TESTING: With Advantage and SmartDashboard to track the velocity and voltage values, we can obtain the
+        // number of volts required to break static friction and obtain kS by taking the value just before the velocity
+        // changes for the system. For Elevator, you need positive and negative precise control over Voltage.
+        //      voltsSystemTest += 0.01;
+        //      sparkMaxMotor.acceptVoltage( voltsSystemTest ); // kS turret = 0.24 Volts
+        //      sparkFlexMotorPair.acceptVoltage( voltsSystemTest ); // ks Shooter = 0.10 Volts
+    }
+
+
+    private void updateGoalPosition(int i) {
+        try {
+            goalPosition = turretPositionPresets[i];;
+        } catch (ArrayIndexOutOfBoundsException ignored) {
+            goalPosition = 0;
+        }
+    }
+
+
+    private void updateGoalVelocity(int i) {
+        try {
+            goalVelocity = shooterVelocityPresets[i];
+        } catch (ArrayIndexOutOfBoundsException ignored) {
+            goalVelocity = 0;
+        }
     }
 }
