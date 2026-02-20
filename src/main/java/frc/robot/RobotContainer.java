@@ -3,6 +3,9 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import frc.commands.actions.SampleCommand;
+import frc.subsystems.Elevator;
+import frc.subsystems.Turret;
 import frc.vision.LimelightRunner;
 import frc.motors.Components;
 
@@ -18,12 +21,30 @@ public class RobotContainer {
     final CommandJoystick joystickDriver = new CommandJoystick(0);
     final CommandJoystick joystickOperator = new CommandJoystick(1);
 
+
     // Components and Helper Systems
     private final Components motorComponents = Components.getInstance();
     private final LimelightRunner visionSubsystem = new LimelightRunner();
 
-    // Robot Subsystems
 
+    // Robot Subsystems
+    private final Turret turret = new Turret(
+        // limit switches (DigitalInput)
+        // motor (SparkMax or SparkFlex Obj)
+        // encoders (Non-Integrated Encoders, Absolute or thru-bore)
+        // ProfiledPIDController (Without )
+    );
+
+    private final Elevator elevator = new Elevator();
+
+
+    // Commands
+    SampleCommand sampleCommand = new SampleCommand(
+        // required subsystems
+        // other systems, vision, ect.
+        // adjustable
+        // PID Controller
+    );
 
 
     /**
