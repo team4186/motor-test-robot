@@ -4,17 +4,10 @@
 
 package frc.robot;
 
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import frc.motors.Components;
 
 
 /**
@@ -23,25 +16,16 @@ import frc.motors.Components;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends TimedRobot {
+    // Auto
     private static final String kDefaultAuto = "Default";
     private static final String kCustomAuto = "My Auto";
     private String m_autoSelected;
     private final SendableChooser<String> m_chooser = new SendableChooser<>();
+    private final Field2d field = new Field2d();
 
-    private final Components motorComponents = Components.getInstance();
 
-    private final SparkMax turretMotor = motorComponents.getTurretMotor();
-    private final RelativeEncoder turretEncoder = turretMotor.getEncoder();
-    private final SparkClosedLoopController turretCLController = turretMotor.getClosedLoopController();
-
-    private final SparkFlex shooterMotor = motorComponents.getShooterMotor();
-    private final RelativeEncoder shooterEncoder = shooterMotor.getEncoder();
-    private final SparkClosedLoopController shooterClosedLoopController = shooterMotor.getClosedLoopController();
-
-    private final CommandJoystick joystickDriver = new CommandJoystick(0);
-    private final CommandJoystick joystickSupport = new CommandJoystick(1);
-
-    private double voltsSystemTesting = 0.0;
+    // Robot Container
+    private final RobotContainer robotContainer;
 
 
     /**
@@ -52,6 +36,7 @@ public class Robot extends TimedRobot {
         m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
         m_chooser.addOption("My Auto", kCustomAuto);
         SmartDashboard.putData("Auto choices", m_chooser);
+        robotContainer  = new RobotContainer();
     }
 
 
@@ -64,18 +49,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
-        SmartDashboard.putNumber("Shooter_Position", shooterEncoder.getPosition());
-        SmartDashboard.putNumber("Shooter_RPM", shooterEncoder.getVelocity());
-
-        SmartDashboard.putNumber("Turret_Position", turretEncoder.getPosition());
-        SmartDashboard.putNumber("Turret_RPM", turretEncoder.getVelocity() );
-
-        SmartDashboard.putNumber("Volts_SystemTest", voltsSystemTesting);
-
-        // SmartDashboard.putNumber()
-
-    //    SmartDashboard.setDefaultNumber("Target Position", 0);
-    //    SmartDashboard.setDefaultNumber("Target Velocity", 0);
+        robotContainer.motorTrialsPeriodicValues();
     }
 
 
@@ -119,62 +93,30 @@ public class Robot extends TimedRobot {
 
     /** This function is called periodically during operator control. */
     @Override
-    public void teleopPeriodic() {
-        // target is 78% of max speed 5800 rpm
-        double requestDriver = attenuated( joystickDriver.getX(), 2, 0.78 );
-        double requestSupport = attenuated( joystickSupport.getX(), 2, 0.2);
-        shooterMotor.set( requestDriver );
-        turretMotor.set( requestSupport );
-    }
+    public void teleopPeriodic() { }
 
 
     /** This function is called once when the robot is disabled. */
     @Override
-    public void disabledInit() {}
+    public void disabledInit() { }
 
 
     /** This function is called periodically when disabled. */
     @Override
-    public void disabledPeriodic() {}
+    public void disabledPeriodic() { }
 
 
     /** This function is called once when test mode is enabled. */
     @Override
     public void testInit() {
-        voltsSystemTesting = 0.0;
+        robotContainer.basicMotorTrialsPeriodic();
     }
 
 
     /** This function is called periodically during test mode. */
     @Override
     public void testPeriodic() {
-        boolean turretButtonPress = false;
-        boolean shooterButtonPress = false;
 
-        // Example of grabbing a button input directly
-        if (joystickDriver.isConnected() && joystickDriver.trigger( ).getAsBoolean()) {
-            turretButtonPress = joystickDriver.trigger( ).getAsBoolean();
-        }
-
-        if ( joystickSupport.isConnected() ) {
-            shooterButtonPress = joystickDriver.trigger().getAsBoolean();
-        }
-
-        // TESTING: target Velocity and Target Position for closed loop controllers
-        // double targetVelocity = SmartDashboard.getNumber("Target Velocity", 0);
-        double targetVelocity = (shooterButtonPress) ? 5200 : 0; // if true tV = 5200 else 0
-        shooterClosedLoopController.setSetpoint(targetVelocity, ControlType.kVelocity, ClosedLoopSlot.kSlot1);
-
-        // Grab target position or offset from SmartDashboard
-        // double targetPosition = SmartDashboard.getNumber("Target Position", 0);
-        // turretCLController.setSetpoint(targetPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0);
-
-
-        // SYSTEM TESTING: With Advantage and SmartDashboard to track the velocity and voltage values, we can obtain the number of
-        // volts required to break static friction and obtain kS by taking the value just before the velocity changes for the system.
-  //      voltsSystemTest += 0.01;
-  //      sparkMaxMotor.acceptVoltage( voltsSystemTest ); // kS turret = 0.24 Volts
-  //      sparkFlexMotorPair.acceptVoltage( voltsSystemTest ); // ks Shooter = 0.10 Volts
     }
 
 
@@ -186,14 +128,4 @@ public class Robot extends TimedRobot {
     /** This function is called periodically whilst in simulation. */
     @Override
     public void simulationPeriodic() {}
-
-
-    // Smoothing out control curve for controller inputs
-    private double attenuated(double value, int exponent, double scale){
-        double result = scale * Math.pow( Math.abs(value), exponent);
-        if (value < 0){ result *= -1; }
-        return result;
-    }
 }
-
-

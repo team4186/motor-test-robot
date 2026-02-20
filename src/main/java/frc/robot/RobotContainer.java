@@ -1,11 +1,14 @@
 package frc.robot;
 
 
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.*;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.commands.actions.SampleCommand;
-import frc.subsystems.Elevator;
-import frc.subsystems.Turret;
+import frc.subsystems.ElevatorTemplate;
+import frc.subsystems.TurretTemplate;
 import frc.vision.LimelightRunner;
 import frc.motors.Components;
 
@@ -18,8 +21,8 @@ import frc.motors.Components;
 public class RobotContainer {
 
     // Controllers
-    final CommandJoystick joystickDriver = new CommandJoystick(0);
-    final CommandJoystick joystickOperator = new CommandJoystick(1);
+    private final CommandJoystick joystickDriver = new CommandJoystick(0);
+    private final CommandJoystick joystickSupport = new CommandJoystick(1);
 
 
     // Components and Helper Systems
@@ -28,14 +31,14 @@ public class RobotContainer {
 
 
     // Robot Subsystems
-    private final Turret turret = new Turret(
+    private final TurretTemplate turret = new TurretTemplate(
         // limit switches (DigitalInput)
         // motor (SparkMax or SparkFlex Obj)
         // encoders (Non-Integrated Encoders, Absolute or thru-bore)
         // ProfiledPIDController (Without )
     );
 
-    private final Elevator elevator = new Elevator();
+    private final ElevatorTemplate elevator = new ElevatorTemplate();
 
 
     // Commands
@@ -47,6 +50,16 @@ public class RobotContainer {
     );
 
 
+    // Simple motor setup testing
+    private final SparkMax turretMotor = motorComponents.getTurretMotor();
+    private final RelativeEncoder turretEncoder = turretMotor.getEncoder();
+    private final SparkClosedLoopController turretCLController = turretMotor.getClosedLoopController();
+
+    private final SparkFlex shooterMotor = motorComponents.getShooterMotor();
+    private final RelativeEncoder shooterEncoder = shooterMotor.getEncoder();
+    private final SparkClosedLoopController shooterClosedLoopController = shooterMotor.getClosedLoopController();
+
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -54,6 +67,7 @@ public class RobotContainer {
         // Configure the trigger bindings
         configureBindings();
         DriverStation.silenceJoystickConnectionWarning(true);
+        // NamedCommands.registerCommand("test", Commands.print("I EXIST")); // PathPlanner
     }
 
 
@@ -65,23 +79,34 @@ public class RobotContainer {
      * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
      */
     private void configureBindings() {
-        // Configure controller assignments
-        if ( Robot.isSimulation() ){
+        // Generic Command Setup
+        // Command defaultDriveCommand = sampleCommand;
 
+        // Set Default Subsystem Commands
+        // drivebase.setDefaultCommand( defaultDriveCommand );
+
+        // Simulation Controller assignments
+        if ( Robot.isSimulation() ){
+            // Setting new pose in sim with Yagsl Swerve
+//            joystickDriver.button(3).onTrue(
+//                Commands.runOnce(
+//                    () -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
         }
 
-        // Test
+        // Test and Non-test Controller assignments
         if ( DriverStation.isTest() ) {
 
-        } else {
-
+        } else  {
+            // joystick.
         }
     }
+
 
 //    public void updateDriverAllianceControls(){
 //        var alliance = DriverStation.getAlliance();
 //        if( alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red ) { }
 //    }
+
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -99,10 +124,67 @@ public class RobotContainer {
 //    }
 
 
-    // Adjust joystick input from linear to exponential curve
-    private double attenuated(double value, int exponent, double scale) {
-        double res = scale * Math.pow( Math.abs(value), exponent );
-        if ( value < 0 ) { res *= -1; }
-        return res;
+    /**
+     * Only use this to track and publish important values in combination with basicMotorTrialsPeriodic()
+     *      using robotPeriodic {@link Robot}.
+     */
+    public void motorTrialsPeriodicValues(){
+        SmartDashboard.putNumber("Shooter_Position", shooterEncoder.getPosition());
+        SmartDashboard.putNumber("Shooter_RPM", shooterEncoder.getVelocity());
+
+        SmartDashboard.putNumber("Turret_Position", turretEncoder.getPosition());
+        SmartDashboard.putNumber("Turret_RPM", turretEncoder.getVelocity() );
+    }
+
+
+    /**
+     * Only use this to run periodic for Simple motor setups in testPeriodic {@link Robot}.
+     */
+    public void basicMotorTrialsPeriodic(){
+        // target is 78% of max speed 5800 rpm
+        double requestDriver = attenuated( joystickDriver.getX(), 2, 0.78 );
+        double requestSupport = attenuated( joystickSupport.getX(), 2, 0.2);
+        shooterMotor.set( requestDriver );
+        turretMotor.set( requestSupport );
+
+        boolean turretButtonPress = false;
+        boolean shooterButtonPress = false;
+
+        // Example of grabbing a button input directly
+        if (joystickDriver.isConnected() && joystickDriver.trigger( ).getAsBoolean()) {
+            turretButtonPress = joystickDriver.trigger( ).getAsBoolean();
+        }
+
+        if ( joystickSupport.isConnected() ) {
+            shooterButtonPress = joystickDriver.trigger().getAsBoolean();
+        }
+
+        // TESTING: target Velocity and Target Position for closed loop controllers
+        // double targetVelocity = SmartDashboard.getNumber("Target Velocity", 0);
+        double targetVelocity = (shooterButtonPress) ? 5200 : 0; // if true tV = 5200 else 0
+        shooterClosedLoopController.setSetpoint(targetVelocity, SparkBase.ControlType.kVelocity, ClosedLoopSlot.kSlot1);
+
+        // Grab target position or offset from SmartDashboard
+        // double targetPosition = SmartDashboard.getNumber("Target Position", 0);
+        // turretCLController.setSetpoint(targetPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+
+
+        // SYSTEM TESTING: With Advantage and SmartDashboard to track the velocity and voltage values, we can obtain the number of
+        // volts required to break static friction and obtain kS by taking the value just before the velocity changes for the system.
+        //      voltsSystemTest += 0.01;
+        //      sparkMaxMotor.acceptVoltage( voltsSystemTest ); // kS turret = 0.24 Volts
+        //      sparkFlexMotorPair.acceptVoltage( voltsSystemTest ); // ks Shooter = 0.10 Volts
+    }
+
+
+    /**
+     * Use this to smooth controller inputs from a linear to an exponential curve.
+     *
+     * @return the adjusted value
+     */
+    private double attenuated(double value, int exponent, double scale){
+        double result = scale * Math.pow( Math.abs(value), exponent);
+        if (value < 0){ result *= -1; }
+        return result;
     }
 }
