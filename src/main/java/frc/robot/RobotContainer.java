@@ -57,9 +57,9 @@ public class RobotContainer {
     private final RelativeEncoder turretEncoder = turretMotor.getEncoder();
     private final SparkClosedLoopController turretCLController = turretMotor.getClosedLoopController();
 
-    private final SparkFlex shooterMotor = motorComponents.getShooterMotor();
-    private final RelativeEncoder shooterEncoder = shooterMotor.getEncoder();
-    private final SparkClosedLoopController shooterClosedLoopController = shooterMotor.getClosedLoopController();
+//    private final SparkFlex shooterMotor = motorComponents.getShooterMotor();
+//    private final RelativeEncoder shooterEncoder = shooterMotor.getEncoder();
+//    private final SparkClosedLoopController shooterClosedLoopController = shooterMotor.getClosedLoopController();
 
     private final int[] turretPositionPresets = { -135, -90,-45, 0,  45, 90, 135};
     private final int[] shooterVelocityPresets = { 0, 2500, 4000, 5200, 5800};
@@ -103,14 +103,15 @@ public class RobotContainer {
 
         // Test and Non-test Controller assignments
         if ( DriverStation.isTest() ) {
-            joystickDriver.button(1).onTrue(Commands.runOnce(() -> updateGoalPosition(0)));
-            joystickDriver.button(2).onTrue(Commands.runOnce(() -> updateGoalPosition(1)));
-            joystickDriver.button(3).onTrue(Commands.runOnce(() -> updateGoalPosition(2)));
-            joystickDriver.button(4).onTrue(Commands.runOnce(() -> updateGoalPosition(3)));
-            joystickDriver.button(5).onTrue(Commands.runOnce(() -> updateGoalPosition(4)));
+            joystickDriver.button(11).onTrue(Commands.runOnce(() -> updateGoalPosition(0)));
+            joystickDriver.button(3).onTrue(Commands.runOnce(() -> updateGoalPosition(1)));
+            joystickDriver.button(4).onTrue(Commands.runOnce(() -> updateGoalPosition(2)));
+            joystickDriver.button(5).onTrue(Commands.runOnce(() -> updateGoalPosition(3)));
+            joystickDriver.button(6).onTrue(Commands.runOnce(() -> updateGoalPosition(4)));
 
 
-            joystickSupport.button(1).onTrue(Commands.runOnce(() -> updateGoalVelocity(0)));
+            joystickDriver.button(12).onTrue(Commands.runOnce(() -> updateGoalVelocity(0)));
+            joystickDriver.button(1).onTrue(Commands.runOnce(() -> updateGoalVelocity(4)));
 
         } else  {
         }
@@ -159,8 +160,8 @@ public class RobotContainer {
      */
     public void motorTrialsPeriodicValues(){
         SmartDashboard.putNumber("Goal Position", goalPosition );
-        SmartDashboard.putNumber("Shooter_Position", shooterEncoder.getPosition());
-        SmartDashboard.putNumber("Shooter_RPM", shooterEncoder.getVelocity());
+//        SmartDashboard.putNumber("Shooter_Position", shooterEncoder.getPosition());
+//        SmartDashboard.putNumber("Shooter_RPM", shooterEncoder.getVelocity());
 
 
         SmartDashboard.putNumber("Goal Velocity", goalVelocity);
@@ -183,7 +184,7 @@ public class RobotContainer {
 
         // Updated in test controller inputs
         turretCLController.setSetpoint(goalPosition, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0);
-        shooterClosedLoopController.setSetpoint(goalVelocity, SparkBase.ControlType.kVelocity, ClosedLoopSlot.kSlot1);
+        // shooterClosedLoopController.setSetpoint(goalVelocity, SparkBase.ControlType.kVelocity, ClosedLoopSlot.kSlot1);
 
 
         // SYSTEM TESTING: With Advantage and SmartDashboard to track the velocity and voltage values, we can obtain the

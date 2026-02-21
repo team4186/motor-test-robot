@@ -68,12 +68,12 @@ public final class MotorConfigs {
                 TurretConstants.MAX_OUTPUT,
                 ClosedLoopSlot.kSlot0)
             .feedForward
-            .kS(
-                TurretConstants.TURRET_KS,
-                ClosedLoopSlot.kSlot0)
-            .kV(
-                TurretConstants.TURRET_KV,
-                ClosedLoopSlot.kSlot0);
+                .kS(
+                    TurretConstants.TURRET_KS,
+                    ClosedLoopSlot.kSlot0)
+                .kV(
+                    TurretConstants.TURRET_KV,
+                    ClosedLoopSlot.kSlot0);
 
         motor.configure(
             config,
@@ -118,10 +118,10 @@ public final class MotorConfigs {
                 ClosedLoopSlot.kSlot1);
 
         baseConfig.encoder
-            .positionConversionFactor(ShooterConstants.POSITION_CONVERSION_FACTOR)
-            .velocityConversionFactor(ShooterConstants.VELOCITY_CONVERSION_FACTOR)
-            .uvwAverageDepth(ShooterConstants.AVERAGE_DEPTH)
-            .uvwMeasurementPeriod(ShooterConstants.MEASUREMENT_PERIOD);
+                .positionConversionFactor(ShooterConstants.POSITION_CONVERSION_FACTOR)
+                .velocityConversionFactor(ShooterConstants.VELOCITY_CONVERSION_FACTOR)
+                .quadratureAverageDepth(ShooterConstants.AVERAGE_DEPTH)
+                .quadratureMeasurementPeriod(ShooterConstants.MEASUREMENT_PERIOD); // NOTE TO SELF: DOUBLE CHECK
 
         motorLeader.configure(
             baseConfig,

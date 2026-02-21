@@ -16,18 +16,18 @@ public final class Constants{
         public static final double GEAR_RATIO = 1.0/20.0;
 
         // PID
-        public static final double TURRET_P = 0.0;
+        public static final double TURRET_P = 0.0075;
         public static final double TURRET_I = 0.0;
-        public static final double TURRET_D = 0.0;
+        public static final double TURRET_D = 0.002;
 
         // FeedForward
-        public static final double TURRET_KS = 0.24;
+        public static final double TURRET_KS = 0.185;
         public static final double TURRET_KV = RobotConstants.NOMINAL_VOLTAGE / TurretConstants.MOTOR_FREE_SPEED;
 
         public static final double POSITION_CONVERSION_FACTOR = (1/GEAR_RATIO) * 360; // Convert to degrees
         public static final double VELOCITY_CONVERSION_FACTOR = 1.0;
-        public static final double MIN_OUTPUT = -0.5;
-        public static final double MAX_OUTPUT = 0.5;
+        public static final double MIN_OUTPUT = -0.75;
+        public static final double MAX_OUTPUT = 0.75;
     }
 
     public static final class ShooterConstants {
@@ -37,7 +37,7 @@ public final class Constants{
         public static final double MOTOR_FREE_SPEED = 6784.0;
 
         // PID
-        public static final double SHOOTER_P = 0.0;
+        public static final double SHOOTER_P = 0.001;
         public static final double SHOOTER_I = 0.0;
         public static final double SHOOTER_D = 0.0;
 
@@ -49,8 +49,8 @@ public final class Constants{
         public static final ControlType CONTROL_TYPE = ControlType.kVelocity;
         public static final double POSITION_CONVERSION_FACTOR = 1.0;
         public static final double VELOCITY_CONVERSION_FACTOR = 1.0;
-        public static final double MIN_OUTPUT = -1.0;
-        public static final double MAX_OUTPUT = 1.0;
+        public static final double MIN_OUTPUT = -0.90;
+        public static final double MAX_OUTPUT = 0.90;
 
         // Improving Velocity Based Control
         public static final int AVERAGE_DEPTH = 5; // 5 Sample Count
